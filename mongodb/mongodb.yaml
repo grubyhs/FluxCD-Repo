@@ -13,9 +13,9 @@ spec:
   values:
     replicaCount: 3
     # Use in prod only
-    nodeSelector: {
-      tier: "db"
-    }
+    # nodeSelector: {
+    #  tier: "db"
+    #}
     port: 27017
     replicaSetName: rs0
     architecture: replicaset
