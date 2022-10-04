@@ -9,7 +9,7 @@ spec:
   chart:
     repository: https://charts.bitnami.com/bitnami
     name: mongodb
-    version: 10.23.10
+    version: 10.23.12
   values:
     replicaCount: 3
     # Use in prod only
