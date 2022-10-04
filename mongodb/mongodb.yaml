@@ -16,7 +16,8 @@ spec:
     # nodeSelector: {
     #  tier: "db"
     #}
-    port: 27017
+    service:
+      port: 27017
     replicaSetName: rs0
     architecture: replicaset
     auth:
