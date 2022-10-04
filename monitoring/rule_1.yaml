@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ingress-nginx-alerts
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/instance: monitoring
+    heritage: Helm
+spec:
+  groups:
+  - name: alert
+    rules:
+    - alert: ingressnginxMemoryHigh
+      expr: nginx_ingress_controller_nginx_process_resident_memory_bytes / nginx_ingress_controller_nginx_resident_memory_limit_bytes * 100 > 90
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Ingress nginx memory high
+    - alert: ingressnginxCPUHigh
+      expr: nginx_ingress_controller_nginx_process_cpu_seconds_total > 0.0022
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Ingress nginx CPU high
+    - alert: resourceConsumption
+      expr: container_processes
+      for: 2m
+      labels:
+        saverity: warning
+      annotations:
+        summary: There is more than 4 running nodes
+    - alert: PrometheusAlertmanagerJobMissing
+      expr: absent(up{job="alertmanager"})
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: Prometheus AlertManager job missing (instance {{ $labels.instance }})
+        description: "A Prometheus AlertManager job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+    - alert: PrometheusAlertmanagerConfigNotSynced
+      expr: count(count_values("config_hash", alertmanager_config_hash)) > 1
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: Prometheus AlertManager config not synced (instance {{ $labels.instance }})
+        description: "Configurations of AlertManager cluster instances are out of sync\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"    

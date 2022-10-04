@@ -1,0 +1,18 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: nginx
+  namespace: nginx
+  annotations:
+    fluxcd.io/automated: "true"
+spec:
+  releaseName: "nginx-final-edition"
+  chart:
+    git: git@github.com:grubyhs/nginx-chart
+    path: new/
+    ref: main
+  values:
+    image:
+      repository: grubyhs/nginx-alpine
+      tag: "2.0"
+    replicaCount: 1

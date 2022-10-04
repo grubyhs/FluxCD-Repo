@@ -1,0 +1,31 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: monitoring
+  annotations:
+    fluxcd.io/automated: "true"
+spec:
+  releaseName: prometheus
+  chart:
+    repository: https://prometheus-community.github.io/helm-charts
+    version: 40.1.0
+    name:  kube-prometheus-stack
+  values:
+    prometheus:
+      prometheusSpec:
+        podMonitorSelectorNilUsesHelmValues: true
+        serviceMonitorSelectorNilUsesHelmValues: true
+      additionalServiceMonitors:
+      - name: proxy-gateway-monitor
+        selector:
+          matchLabels:
+            app.kubernetes.io/component: controller
+            app.kubernetes.io/instance: ingress-nginx
+        namespaceSelector:
+          matchNames:
+            - ingress-nginx
+        endpoints:
+          - port: http-metrics
+            interval: 10s
+
